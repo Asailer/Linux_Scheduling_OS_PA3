@@ -1,0 +1,192 @@
+#/!/bin/bash
+
+#File: testscript
+#Author: Conrad Hougen
+# --> with reference to bash script provided by Andy Sayler
+#Project: CSCI 3753 Programming Assignment 3
+#Description:
+#	A simple bash script to run all testcases
+
+ITERATIONS=100000000
+MIXED_ITER=1000000
+BYTESTOCOPY=1048576
+BLOCKSIZE=1024
+TIMEFORMAT="wall=%e user=%U system=%S CPU=%P i-switched=%c v-switched=%w"
+MAKE="make -s"
+LOW=10
+MEDIUM=60
+HIGH=200
+COUNTER=0
+
+echo Building code...
+$MAKE clean
+$MAKE
+
+echo Starting test runs...
+
+while [ $COUNTER -lt 1 ]; do
+	echo T0: Calculating pi over $ITERATIONS iterations using SCHED_OTHER with $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./pi-sched $ITERATIONS SCHED_OTHER $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+
+	echo T1: Calculating pi over $ITERATIONS iterations using SCHED_OTHER with $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./pi-sched $ITERATIONS SCHED_OTHER $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	
+	echo T2: Calculating pi over $ITERATIONS iterations using SCHED_OTHER with $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./pi-sched $ITERATIONS SCHED_OTHER $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	
+	echo T3: Calculating pi over $ITERATIONS iterations using SCHED_FIFO with $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_FIFO $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+
+	echo T4: Calculating pi over $ITERATIONS iterations using SCHED_FIFO with $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_FIFO $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+
+	echo T5: Calculating pi over $ITERATIONS iterations using SCHED_FIFO with $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_FIFO $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	
+	echo T6: Calculating pi over $ITERATIONS iterations using SCHED_RR with $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_RR $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	
+	echo T7: Calculating pi over $ITERATIONS iterations using SCHED_RR with $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_RR $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	
+	echo T8: Calculating pi over $ITERATIONS iterations using SCHED_RR with $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./pi-sched $ITERATIONS SCHED_RR $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+
+	echo T9: Mixed with SCHED_OTHER and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./mixed $MIXED_ITER SCHED_OTHER $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T10: Mixed with SCHED_OTHER and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./mixed $MIXED_ITER SCHED_OTHER $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T11: Mixed with SCHED_OTHER and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./mixed $MIXED_ITER SCHED_OTHER $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T12: Mixed with SCHED_FIFO and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_FIFO $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T13: Mixed with SCHED_FIFO and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_FIFO $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T14: Mixed with SCHED_FIFO and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_FIFO $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T15: Mixed with SCHED_RR and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_RR $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T16: Mixed with SCHED_RR and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_RR $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T17: Mixed with SCHED_RR and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./mixed $MIXED_ITER SCHED_RR $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+
+	echo T18: IO-bound with SCHED_OTHER and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_OTHER $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T19: IO-bound with SCHED_OTHER and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_OTHER $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T20: IO-bound with SCHED_OTHER and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_OTHER $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T21: IO-bound with SCHED_FIFO and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_FIFO $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T22: IO-bound with SCHED_FIFO and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_FIFO $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T23: IO-bound with SCHED_FIFO and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_FIFO $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T24: IO-bound with SCHED_RR and $LOW simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_RR $LOW $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T25: IO-bound with SCHED_RR and $MEDIUM simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_RR $MEDIUM $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+
+	echo T26: IO-bound with SCHED_RR and $HIGH simultaneous processes... >> test_results/test$COUNTER.txt
+	/usr/bin/time -f "$TIMEFORMAT" 2>>test_results/test$COUNTER.txt sudo ./rw $BYTESTOCOPY $BLOCKSIZE SCHED_RR $HIGH $COUNTER
+	echo ENDOFTEST >> test_results/test$COUNTER.txt
+	cd output
+	sudo rm *
+	cd ..
+	
+	let COUNTER=COUNTER+1
+done
